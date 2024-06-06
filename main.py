@@ -1,16 +1,26 @@
 import json
 from fastapi import FastAPI
 import os
+import httpx
 import requests
 import pdfplumber
 import pytesseract
 from pydantic import BaseModel
 from typing import List
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:8081/","http://localhost:4200"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class Users(BaseModel):
-    Usernames: List[str]
+    usernames: List[str]
 
 def get_all_file_paths(folder_path):
     file_paths = []
@@ -27,7 +37,7 @@ async def get_message():
 @app.get("/getPaths")
 async def get_paths(users : Users):
         paths = []
-        for user in users.Usernames:
+        for user in users.usernames:
                 print(user)
                 folder_path = rf'C:\Users\Nemanja\Desktop\StudentRequests\{user}'
                 print(folder_path)
@@ -37,10 +47,11 @@ async def get_paths(users : Users):
 
         return {"Paths:" : paths}
 
-@app.get("/readDox")
+@app.post("/readDox")
 async def read_dox(users : Users):
-        for user in users.Usernames:
-                lines = []
+        lines = []
+        for user in users.usernames:
+                print("****************************************"+user)                
                 folder_path = rf'C:\Users\Nemanja\Desktop\StudentRequests\{user}'
                 all_file_paths = get_all_file_paths(folder_path)
                 for path in all_file_paths:       
@@ -52,6 +63,8 @@ async def read_dox(users : Users):
                                         page = pdf.pages[0]
                                         text = page.extract_text()
                                 lines += text.split('\n')
-                                json_string = json.dumps(lines)
         return lines
-                
+
+@app.get("/javiSePajtone")
+async def helloPython():
+        return "Pajton kaze caooooO TIAOSJTROIHASTASOH"
