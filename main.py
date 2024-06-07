@@ -32,7 +32,7 @@ def get_all_file_paths(folder_path):
 @app.post("/studentRequests")
 async def read_dox(users : Users):
         lines = []               
-        folder_path = rf'C:\Users\Nemanja\Desktop\StudentRequests\{users.usernames}'
+        folder_path = rf'/Users/nemanjaranitovic/Desktop/studentRequests/{users.usernames}'
         all_file_paths = get_all_file_paths(folder_path)
         for path in all_file_paths:       
                 invoice_pdf = path
@@ -48,7 +48,7 @@ async def read_dox(users : Users):
 @app.post("/pensionerRequests")
 async def read_dox(users : Users):
         lines = []               
-        folder_path = rf'C:\Users\Nemanja\Desktop\PensionerRequests\{users.usernames}'
+        folder_path = rf'/Users/nemanjaranitovic/Desktop/pensionerRequests/{users.usernames}'
         all_file_paths = get_all_file_paths(folder_path)
         for path in all_file_paths:       
                 invoice_pdf = path
