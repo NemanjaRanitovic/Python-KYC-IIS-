@@ -20,7 +20,7 @@ app.add_middleware(
 )
 
 class Users(BaseModel):
-    usernames: List[str]
+    usernames: str
 
 def get_all_file_paths(folder_path):
     file_paths = []
@@ -29,42 +29,34 @@ def get_all_file_paths(folder_path):
             file_paths.append(os.path.join(root, file))
     return file_paths
 
-
-@app.get("/get-message")
-async def get_message():
-        return {"Message" : "Hello World!"}
-
-@app.get("/getPaths")
-async def get_paths(users : Users):
-        paths = []
-        for user in users.usernames:
-                print(user)
-                folder_path = rf'C:\Users\Nemanja\Desktop\StudentRequests\{user}'
-                print(folder_path)
-                all_file_paths = get_all_file_paths(folder_path)
-                for path in all_file_paths:
-                        paths.append(path)
-
-        return {"Paths:" : paths}
-
-@app.post("/readDox")
+@app.post("/studentRequests")
 async def read_dox(users : Users):
-        lines = []
-        for user in users.usernames:
-                print("****************************************"+user)                
-                folder_path = rf'C:\Users\Nemanja\Desktop\StudentRequests\{user}'
-                all_file_paths = get_all_file_paths(folder_path)
-                for path in all_file_paths:       
-                        invoice_pdf = path
-                        last_three_chars = invoice_pdf[-3:]
-                        if last_three_chars == "pdf":
-                                os.system(f'ocrmypdf --force-ocr {invoice_pdf} output.pdf')
-                                with pdfplumber.open("output.pdf") as pdf:
-                                        page = pdf.pages[0]
-                                        text = page.extract_text()
-                                lines += text.split('\n')
+        lines = []               
+        folder_path = rf'C:\Users\Nemanja\Desktop\StudentRequests\{users.usernames}'
+        all_file_paths = get_all_file_paths(folder_path)
+        for path in all_file_paths:       
+                invoice_pdf = path
+                last_three_chars = invoice_pdf[-3:]
+                if last_three_chars == "pdf":
+                        os.system(f'ocrmypdf --force-ocr {invoice_pdf} output.pdf')
+                        with pdfplumber.open("output.pdf") as pdf:
+                                page = pdf.pages[0]
+                                text = page.extract_text()
+                        lines += text.split('\n')
         return lines
 
-@app.get("/javiSePajtone")
-async def helloPython():
-        return "Pajton kaze caooooO TIAOSJTROIHASTASOH"
+@app.post("/pensionerRequests")
+async def read_dox(users : Users):
+        lines = []               
+        folder_path = rf'C:\Users\Nemanja\Desktop\PensionerRequests\{users.usernames}'
+        all_file_paths = get_all_file_paths(folder_path)
+        for path in all_file_paths:       
+                invoice_pdf = path
+                last_three_chars = invoice_pdf[-3:]
+                if last_three_chars == "pdf":
+                        os.system(f'ocrmypdf --force-ocr {invoice_pdf} output.pdf')
+                        with pdfplumber.open("output.pdf") as pdf:
+                                page = pdf.pages[0]
+                                text = page.extract_text()
+                        lines += text.split('\n')
+        return lines
